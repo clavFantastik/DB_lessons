@@ -1,0 +1,69 @@
+@startuml lab1_rental
+
+skinparam linetype ortho
+
+entity "property_types" {
+  * type_id : SERIAL <<PK>>
+  --
+  * name : VARCHAR(50)
+  description : TEXT
+}
+
+entity "users" {
+  * user_id : SERIAL <<PK>>
+  --
+  * email : VARCHAR(255)
+  * password_hash : VARCHAR(255)
+  * first_name : VARCHAR(100)
+  * last_name : VARCHAR(100)
+  phone : VARCHAR(20)
+  * role : user_role
+  * created_at : TIMESTAMP
+  * is_verified : BOOLEAN
+}
+
+entity "properties" {
+  * property_id : SERIAL <<PK>>
+  --
+  * host_id : INTEGER <<FK>>
+  * type_id : INTEGER <<FK>>
+  * title : VARCHAR(255)
+  description : TEXT
+  * address : VARCHAR(255)
+  * city : VARCHAR(100)
+  * country : VARCHAR(100)
+  * price_per_night : DECIMAL(10,2)
+  * max_guests : INTEGER
+  bedrooms : INTEGER
+  bathrooms : INTEGER
+  * is_active : BOOLEAN
+}
+
+entity "bookings" {
+  * booking_id : SERIAL <<PK>>
+  --
+  * guest_id : INTEGER <<FK>>
+  * property_id : INTEGER <<FK>>
+  * check_in_date : DATE
+  * check_out_date : DATE
+  * total_price : DECIMAL(10,2)
+  * status : booking_status
+  * created_at : TIMESTAMP
+}
+
+entity "reviews" {
+  * review_id : SERIAL <<PK>>
+  --
+  * booking_id : INTEGER <<FK>>
+  * rating : SMALLINT
+  comment : TEXT
+  * created_at : TIMESTAMP
+}
+
+users        ||--o{ properties : "host places  1:N"
+property_types ||--o{ properties : "type of  1:N"
+users        ||--o{ bookings   : "guest books  1:N"
+properties   ||--o{ bookings   : "property booked  1:N"
+bookings     ||--o| reviews    : "has review  1:1"
+
+@enduml
